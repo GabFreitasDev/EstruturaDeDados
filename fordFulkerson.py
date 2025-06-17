@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 class Grafo:
 
     def __init__(self, grafo):
-        self.grafo = grafo  # grafo residual
+        self.grafo = grafo 
         self.ROW = len(grafo)
 
     def DFS(self, s, t, parent, visited):
