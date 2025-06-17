@@ -7,43 +7,29 @@ class Grafo:
         self.grafo = grafo  # grafo residual
         self.ROW = len(grafo)
 
-    def BFS(self, fonte, target, parent):
+    def DFS(self, s, t, parent, visited):
+        visited[s] = True
 
-        # Marca todos os vértices como não visitados
-        visited = [False]*(self.ROW)
-        fila = []
+        if s == t:
+            return True
 
-        fila.append(fonte)
-        visited[fonte] = True
-
-        # Loop padrão do BFS
-        while fila:
-
-            vertice = fila.pop(0)
-
-            # Obtém todos os vértices próximos do vértice removido
-            # se um próximo não foi visitado, então marca como
-            # visitado e coloca na fila
-            for i, val in enumerate(self.grafo[vertice]):
-                if visited[i] == False and val > 0:
-                    # Se encontrarmos uma conexão para o último então não precisa mais continuar o BFS
-                    fila.append(i)
-                    visited[i] = True
-                    parent[i] = vertice
-                    if i == target:
-                        return True
-
+        for ind, val in enumerate(self.grafo[s]):
+            if not visited[ind] and val > 0:
+                parent[ind] = s
+                if self.DFS(ind, t, parent, visited):
+                    return True
         return False
         
     def fordFulkerson(self, fonte, target):
-
-        # Este array é preenchido pelo BFS para armazenar o caminho
         parent = [-1]*(self.ROW)
-
-        fluxoMax = 0 # Inicialmente não há fluxo
+        fluxoMax = 0 
 
         # Aumenta o fluxo enquanto houver caminho da fonte para o último nó
-        while self.BFS(fonte, target, parent):
+        while True:
+            visited = [False] * self.ROW
+            if not self.DFS(fonte, target, parent, visited):
+                break
+
             caminhoFluxo = float("Inf")
             tempObj = target
 
@@ -89,7 +75,7 @@ grafo = [[0, 16, 13, 0, 0, 0],
 
 mostraGrafo(grafo)
 g = Grafo(grafo)
-
 fonte = 0; target = 5
+fluxoMax = g.fordFulkerson(fonte, target)
  
-print ("O Fluxo maximo e igual a %d " % g.f(fonte, target))
+print("Fluxo Máximo: ", fluxoMax)
