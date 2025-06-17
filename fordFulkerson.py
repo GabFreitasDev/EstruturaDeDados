@@ -1,86 +1,68 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 
-class Graph:
+class Grafo:
 
-    def __init__(self, graph):
-        self.graph = graph  # grafo residual
-        self.ROW = len(graph)
-        # self.COL = len(gr[0])
+    def __init__(self, grafo):
+        self.grafo = grafo  # grafo residual
+        self.ROW = len(grafo)
 
-    '''Retorna verdadeiro se houver um caminho da fonte 's' para o sumidouro 't' no
-    grafo residual. Também preenche parent[] para armazenar o caminho'''
-
-    def BFS(self, s, t, parent):
+    def BFS(self, fonte, target, parent):
 
         # Marca todos os vértices como não visitados
         visited = [False]*(self.ROW)
+        fila = []
 
-        # Cria uma fila para BFS
-        queue = []
-
-        # Marca o nó de origem como visitado e o coloca na fila
-        queue.append(s)
-        visited[s] = True
+        fila.append(fonte)
+        visited[fonte] = True
 
         # Loop padrão do BFS
-        while queue:
+        while fila:
 
-            # Remove um vértice da fila
-            u = queue.pop(0)
+            vertice = fila.pop(0)
 
-            # Obtém todos os vértices adjacentes do vértice removido u
-            # Se um adjacente não foi visitado, então marca como
+            # Obtém todos os vértices próximos do vértice removido
+            # se um próximo não foi visitado, então marca como
             # visitado e coloca na fila
-            for ind, val in enumerate(self.graph[u]):
-                if visited[ind] == False and val > 0:
-                    # Se encontrarmos uma conexão para o nó sumidouro,
-                    # então não há mais sentido em continuar o BFS
-                    # Basta definir seu pai e retornar verdadeiro
-                    queue.append(ind)
-                    visited[ind] = True
-                    parent[ind] = u
-                    if ind == t:
+            for i, val in enumerate(self.grafo[vertice]):
+                if visited[i] == False and val > 0:
+                    # Se encontrarmos uma conexão para o último então não precisa mais continuar o BFS
+                    fila.append(i)
+                    visited[i] = True
+                    parent[i] = vertice
+                    if i == target:
                         return True
 
-        # Não alcançamos o sumidouro no BFS iniciado
-        # a partir da fonte, então retorna falso
         return False
         
-
-    # Retorna o fluxo máximo de s para t no grafo dado
-    def fordFulkerson(self, source, sink):
+    def fordFulkerson(self, fonte, target):
 
         # Este array é preenchido pelo BFS para armazenar o caminho
         parent = [-1]*(self.ROW)
 
-        max_flow = 0 # Inicialmente não há fluxo
+        fluxoMax = 0 # Inicialmente não há fluxo
 
-        # Aumenta o fluxo enquanto houver caminho da fonte para o sumidouro
-        while self.BFS(source, sink, parent):
+        # Aumenta o fluxo enquanto houver caminho da fonte para o último nó
+        while self.BFS(fonte, target, parent):
+            caminhoFluxo = float("Inf")
+            tempObj = target
 
-            # Encontra a capacidade residual mínima das arestas ao longo do
-            # caminho encontrado pelo BFS. Ou podemos dizer que encontra o fluxo máximo
-            # através do caminho encontrado.
-            path_flow = float("Inf")
-            s = sink
-            while(s != source):
-                path_flow = min(path_flow, self.graph[parent[s]][s])
-                s = parent[s]
+            # Calcula fluxo e atualiza capacidades
+            while(tempObj != fonte):
+                caminhoFluxo = min(caminhoFluxo, self.grafo[parent[tempObj]][tempObj])
+                tempObj = parent[tempObj]
 
-            # Adiciona o fluxo do caminho ao fluxo total
-            max_flow += path_flow
+            fluxoMax += caminhoFluxo
 
-            # atualiza as capacidades residuais das arestas e arestas reversas
-            # ao longo do caminho
-            v = sink
-            while(v != source):
-                u = parent[v]
-                self.graph[u][v] -= path_flow
-                self.graph[v][u] += path_flow
-                v = parent[v]
+            # Reinicia o percurso para atualizar as capacidades
+            tempObj = target
+            while(tempObj != fonte):
+                vertice = parent[tempObj]
+                self.grafo[vertice][tempObj] -= caminhoFluxo
+                self.grafo[tempObj][vertice] += caminhoFluxo
+                tempObj = parent[tempObj]
 
-        return max_flow
+        return fluxoMax
 
 def mostraGrafo(graph_matrix):
     G = nx.DiGraph()
@@ -98,16 +80,16 @@ def mostraGrafo(graph_matrix):
 
 # Cria um grafo conforme o diagrama abaixo
 
-graph = [[0, 16, 13, 0, 0, 0],
+grafo = [[0, 16, 13, 0, 0, 0],
         [0, 0, 10, 12, 0, 0],
         [0, 4, 0, 0, 14, 0],
         [0, 0, 9, 0, 0, 20],
         [0, 0, 0, 7, 0, 4],
         [0, 0, 0, 0, 0, 0]]
 
-mostraGrafo(graph)
-g = Graph(graph)
+mostraGrafo(grafo)
+g = Grafo(grafo)
 
-source = 0; sink = 5
+fonte = 0; target = 5
  
-print ("O Fluxo maximo e igual a %d " % g.f(source, sink))
+print ("O Fluxo maximo e igual a %d " % g.f(fonte, target))
