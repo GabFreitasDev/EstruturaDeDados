@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 class Grafo:
 
     def __init__(self, grafo):
-        self.grafo = grafo
+        self.grafo = grafo  # grafo residual
         self.ROW = len(grafo)
 
     def DFS(self, s, t, parent, visited):
@@ -20,18 +20,18 @@ class Grafo:
                     return True
         return False
         
-    def fordFulkerson(self, fonte, target):
+    def fordFulkerson(self, fonte, coletor):
         parent = [-1]*(self.ROW)
         fluxoMax = 0 
 
         # Aumenta o fluxo enquanto houver caminho da fonte para o último nó
         while True:
             visited = [False] * self.ROW
-            if not self.DFS(fonte, target, parent, visited):
+            if not self.DFS(fonte, coletor, parent, visited):
                 break
 
             caminhoFluxo = float("Inf")
-            tempObj = target
+            tempObj = coletor
 
             # Calcula fluxo e atualiza capacidades
             while(tempObj != fonte):
@@ -41,7 +41,7 @@ class Grafo:
             fluxoMax += caminhoFluxo
 
             # Reinicia o percurso para atualizar as capacidades
-            tempObj = target
+            tempObj = coletor
             while(tempObj != fonte):
                 vertice = parent[tempObj]
                 self.grafo[vertice][tempObj] -= caminhoFluxo
@@ -75,7 +75,7 @@ grafo = [[0, 16, 13, 0, 0, 0],
 
 mostraGrafo(grafo)
 g = Grafo(grafo)
-fonte = 0; target = 5
-fluxoMax = g.fordFulkerson(fonte, target)
+fonte = 0; coletor = 5
+fluxoMax = g.fordFulkerson(fonte, coletor)
  
 print("Fluxo Máximo: ", fluxoMax)
