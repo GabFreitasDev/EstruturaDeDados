@@ -111,5 +111,3 @@ g = Graph(graph)
 source = 0; sink = 5
  
 print ("O Fluxo maximo e igual a %d " % g.f(source, sink))
-
-# This code is contributed by Neelam Yadav
