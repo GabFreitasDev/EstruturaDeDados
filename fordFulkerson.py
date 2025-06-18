@@ -5,9 +5,11 @@ class Grafo:
 
     def __init__(self, grafo):
         self.grafo = grafo
-        self.ROW = len(grafo)
+        self.ROW = len(grafo) # Número de vértices
 
     def DFS(self, fonte, coletor, parent, visited):
+        # Encontra caminhos aumentantes recursivamente
+        # Usa 'visited' para evitar ciclos e 'parent' para reconstruir caminhos
         visited[fonte] = True
 
         if fonte == coletor:
@@ -28,7 +30,7 @@ class Grafo:
         while True:
             visited = [False] * self.ROW
             if not self.DFS(fonte, coletor, parent, visited):
-                break
+                break # Para quando não há mais caminhos
 
             caminhoFluxo = float("Inf")
             tempObj = coletor
@@ -46,7 +48,7 @@ class Grafo:
             while(tempObj != fonte):
                 vertice = parent[tempObj]
                 self.grafo[vertice][tempObj] -= caminhoFluxo
-                self.grafo[tempObj][vertice] += caminhoFluxo
+                self.grafo[tempObj][vertice] += caminhoFluxo # Aresta reversa
                 tempObj = parent[tempObj]
 
         return fluxoMax
@@ -60,6 +62,7 @@ def mostraGrafo(graph_matrix):
                 G.add_edge(i, j, capacity=graph_matrix[i][j])
     
     pos = nx.spring_layout(G)
+    # Usa NetworkX para desenhar o grafo
     nx.draw(G, pos, with_labels=True, node_color='skyblue', node_size=700)
     edge_labels = nx.get_edge_attributes(G, 'capacity')
     nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels)
