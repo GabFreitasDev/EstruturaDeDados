@@ -4,19 +4,19 @@ import matplotlib.pyplot as plt
 class Grafo:
 
     def __init__(self, grafo):
-        self.grafo = grafo 
+        self.grafo = grafo
         self.ROW = len(grafo)
 
-    def DFS(self, s, t, parent, visited):
-        visited[s] = True
+    def DFS(self, fonte, coletor, parent, visited):
+        visited[fonte] = True
 
-        if s == t:
+        if fonte == coletor:
             return True
 
-        for ind, val in enumerate(self.grafo[s]):
-            if not visited[ind] and val > 0:
-                parent[ind] = s
-                if self.DFS(ind, t, parent, visited):
+        for i, val in enumerate(self.grafo[fonte]):
+            if not visited[i] and val > 0:
+                parent[i] = fonte
+                if self.DFS(i, coletor, parent, visited):
                     return True
         return False
         
@@ -35,8 +35,9 @@ class Grafo:
 
             # Calcula fluxo e atualiza capacidades
             while(tempObj != fonte):
-                caminhoFluxo = min(caminhoFluxo, self.grafo[parent[tempObj]][tempObj])
-                tempObj = parent[tempObj]
+                vertice = parent[tempObj]
+                caminhoFluxo = min(caminhoFluxo, self.grafo[vertice][tempObj])
+                tempObj = vertice
 
             fluxoMax += caminhoFluxo
 
